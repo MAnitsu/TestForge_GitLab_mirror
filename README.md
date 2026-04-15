@@ -13,6 +13,10 @@ PlaywrightFramework/
 
 │   └─ credentials.py
 
+├─ data/
+
+│   └─ textfile.txt
+
 ├── pages/
 
 │ └── yourpage_page.py
@@ -30,6 +34,7 @@ PlaywrightFramework/
 └── README.md
 
 - `pages/` → Contains all test pages and their fixtures
+- `data/` → Contains all the data needed by the tests
 - `tests/` → Contains all test files
 - `conftest.py` → Defines pytest fixtures for browser and page setup
 - `requirements.txt` → Python dependencies
