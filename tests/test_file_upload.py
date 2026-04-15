@@ -11,7 +11,7 @@ def test_file_upload(page):
     file_upload_page.navigate()
 
     with allure.step("Upload the file named \"textfile.txt\""):
-        file_upload_page.upload_file("textfile.txt")
+        file_upload_page.upload_file("data/textfile.txt")
 
     with allure.step("Check if the correct file was updated"):
-        assert file_upload_page.check_file_name("textfile.txt") is True
+        assert file_upload_page.check_file_name("data/textfile.txt") is True
