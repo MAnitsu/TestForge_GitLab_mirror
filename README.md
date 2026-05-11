@@ -169,11 +169,13 @@ echo "Hello World" > testfile.txt
 ✅ Generate HTML test reports (Allure)
 
 ### To do
+✅ Add BDD-Style Gherking test scenarios
+
 ✅ Use pytest parametrise to test multiple inputs
 
 ✅ Add API tests
 
-✅ Integrate with GitHub Actions for Continuous Integration
+✅ Integrate tests inside CI/CD pipelines
 
 ✅ Run tests in headless mode for speed
 
