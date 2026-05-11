@@ -56,7 +56,7 @@ cd PlaywrightUITest
 ```
 
 ### 2. Create a Virtual Environment
-The virtual environment is not included in the repository. Each user should generate it locally depending on their OS.
+The virtual environment is not included in the repository. Each user should generate it locally depending on their OS and activate it when running tests locally, then deactivate it after all the desired tests are done.
 
 ```bash
 # Windows:
@@ -67,6 +67,10 @@ deactivate # !!deactivate environment after installing dependencies and running 
 # macOS/Linux:
 python3 -m venv venv
 source venv/bin/activate
+```
+Deactivate virtual environment:
+```bash
+deactivate
 ```
 
 ### 3. Install Python Dependencies
@@ -180,18 +184,10 @@ Run Playwright Codegen (record actions):
 ```bash
 playwright codegen https://the-internet.herokuapp.com/
 ```
-Update requirements.txt:
-```bash
-pip freeze > requirements.txt
-```
-Deactivate virtual environment:
-```bash
-deactivate
-```
 
 ## 👨‍💻 Author
 Mihai A. Nițu
 
-GitHub: https://github.com/MAnitsu
+GitLab: https://gitlab.com/MAnitsu
 
 LinkedIn: https://www.linkedin.com/in/mihai-alexandru-nitu-b8035a16a/
