@@ -1,10 +1,13 @@
-# pages/login_page.py
+# tests/ui/pages/login_page.py
 
+import os
 from playwright.sync_api import Page
 
+
 class LoginPage:
-    def __init__(self, page: Page):
+    def __init__(self, page: Page, base_url: str = ""):
         self.page = page
+        self.base_url = base_url or os.getenv("BASE_URL", "https://the-internet.herokuapp.com")
         self.username = page.locator("#username")
         self.password = page.locator("#password")
         self.login_button = page.locator("button[type='submit']")
@@ -12,11 +15,16 @@ class LoginPage:
         self.flash_error = page.locator("#flash.error")
 
     def navigate(self):
-        self.page.goto("https://the-internet.herokuapp.com/login")
+        self.page.goto(f"{self.base_url}/login")
 
-    def login(self, user: str, pwd: str):
+    def enter_credentials(self, user: str, pwd: str):
+        """Fill the username and password fields without submitting."""
         self.username.fill(user)
         self.password.fill(pwd)
+
+    def login(self, user: str, pwd: str):
+        """Enter credentials and submit the form."""
+        self.enter_credentials(user, pwd)
         self.login_button.click()
 
     def success_message_visible(self) -> bool:

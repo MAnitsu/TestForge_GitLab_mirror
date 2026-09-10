@@ -1,54 +1,68 @@
 # UI Test Automation with Python & Playwright
 
-This project automates UI tests for [the-internet.herokuapp.com](https://the-internet.herokuapp.com/) using Python, pytest, and Playwright. It contains report generation using Allure and will later have API tests added.
+This project automates UI tests for [the-internet.herokuapp.com](https://the-internet.herokuapp.com/) using Python, pytest, pytest-bdd, Playwright and Allure.
 
 Allure report showcase: https://manitsu.github.io/PlaywrightFramework/#
 
 ---
 
-## 📂 Project Structure
+## Project Structure
+
 PlaywrightFramework/
 
-├─ constants/
+├─ features/ui/
 
-│   └─ credentials.py
+│   └─ *.feature
 
-├─ data/
+├─ tests/
 
-│   └─ textfile.txt
+│   ├─ ui/
 
-├── pages/
+│   │   ├─ pages/
 
-│ └── yourpage_page.py
+│   │   │   └─ *_page.py
 
-├── tests/
+│   │   ├─ data/
 
-│ └── test_yourpage.py
+│   │   │   └─ textfile.txt
 
-├── conftest.py
+│   │   ├─ constants/
 
-├── requirements.txt
+│   │   │   └─ credentials.py
 
-├── .gitignore
+│   │   ├─ test_*.py
 
-└── README.md
+├─ conftest.py
 
-- `pages/` → Contains all test pages and their fixtures
-- `data/` → Contains all the data needed by the tests
-- `tests/` → Contains all test files
-- `conftest.py` → Defines pytest fixtures for browser and page setup
+├─ requirements.txt
+
+├─ .env
+
+├─ .gitignore
+
+└─ README.md
+
+- `features/ui/` → Contains BDD feature files (Gherkin scenarios)
+- `tests/ui/` → Contains BDD test implementations with step definitions
+- `tests/ui/pages/` → UI-related page objects
+- `tests/ui/data/` → UI-related test data
+- `tests/ui/constants/` → UI-related credentials
+- `conftest.py` → Defines pytest fixtures for browser, page setup, and allure failure hooks
 - `requirements.txt` → Python dependencies
 - `.gitignore` → Excludes unnecessary or system-specific files from version control
 - `README.md` → Documentation
+
 ---
 
-## ✅ Prerequisites
+## Prerequisites
 - Python ≥ 3.9
 - Git
 - Playwright CLI (`pip install playwright`)
+
 ---
 
-## ⚙️ Installation
+## Installation
+
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/MAnitsu/PlaywrightUITest.git
@@ -62,7 +76,6 @@ The virtual environment is not included in the repository. Each user should gene
 # Windows:
 python -m venv venv
 venv\Scripts\activate # activates environment
-deactivate # !!deactivate environment after installing dependencies and running tests
 
 # macOS/Linux:
 python3 -m venv venv
@@ -82,72 +95,101 @@ pip install -r requirements.txt
 ```bash
 playwright install
 ```
-### 💡 Notes
-The venv/ folder is excluded via .gitignore to keep the repository clean and OS-independent.
 
-Regenerating the virtual environment ensures consistency across contributors without committing system-specific binaries.
+### 5. Configure BASE_URL
+Copy the `.env.example` file and set your base URL:
+```bash
+cp .env.example .env
+# Edit .env to set BASE_URL
+```
 
-## 🧪 Running Tests
+Default: `https://the-internet.herokuapp.com`
+
+---
+
+## Running Tests
+
 Run all tests:
 ```bash
 pytest
 ```
 Run a specific test file:
 ```bash
-pytest tests/test_login.py
+pytest tests/ui/test_login.py
 ```
+
 Run tests with detailed output:
 ```bash
 pytest -v
 ```
-Run tests and generate an easy to read report
+
+Run tests and generate an HTML report
 ```bash
 pip install pytest-html
-pytest --html=report.html --self-contained-html # to run the tests and generate the report
-# Run tests with Allure Report
-pip install allure-pytest
+pytest --html=report.html --self-contained-html
+```
+
+Run tests with Allure Report
+```bash
 pytest --alluredir=reports/allure-results
 allure serve reports/allure-results
 ```
 
-## 📄 How to Create New Tests
-### 1. Create a new file in pages/ to import the page fixtures:
+---
+
+## BDD Test Structure
+
+### Feature Files (`features/ui/`)
+Gherkin scenarios defining the behavior:
+```gherkin
+Feature: Login
+  Scenario: Valid Login
+    Given I navigate to the login page
+    When I enter valid credentials
+    And I click the login button
+    Then I should see a success message
+```
+
+### Test Files (`tests/ui/`)
+BDD test implementations with step definitions:
 ```python
-class YourPage:
-    def __init__(self, page: Page): # in the constructor all the locators needed must be assigned
-        self.page = page
-        self.yourlocator = page.locator("#yourlocatorhere")
+@scenario("../../features/ui/login.feature", "Valid Login")
+@allure.feature("Login")
+@allure.story("Valid Login")
+def test_valid_login():
+    """Verify a user can log in with valid credentials."""
 
-    def navigate(self): # navigate action is mandatory to be able to load the page
-        self.page.goto("https://yourpagehere.test")
+@given("I navigate to the login page")
+def navigate_to_login_page(page, base_url):
+    page.login_page = LoginPage(page, base_url)
+    page.login_page.navigate()
 
-    def action(self): # define any action you need to be performed on locators, in this example checking a checkbox
-        action = self.yourlocator.check()
+@when("I enter valid credentials")
+def enter_valid_credentials(page, valid_credentials):
+    page.login_page.enter_credentials(...)
 
-    def check(self) -> bool: # define a check function that returns a boolean value to be able to check if an action was performed or not
-        return self.yourlocator.is_checked()
-```
-### 2. Create a new file in tests/ where the tests will be written using the methods from the pages, making them easy to read, like scripts:
-```bash
-def test_yourpage(page):
-    yourpage_page = YourPage(page)
-    yourpage_page.navigate() # loads the page
-    
-    # perform action
-    yourpage_page.action()
+@when("I click the login button")
+def click_login_button(page):
+    page.login_page.login_button.click()
 
-    # check that your action was performed
-    assert yourpage_page.check() is True # if the action was performed, the test will pass, else the test will fail
+@then("I should see a success message")
+def verify_success_message(page):
+    assert page.login_page.success_message_visible()
 ```
 
-### 3. Use Playwright commands:
-- page.goto(url)
-- page.fill(selector, text)
-- page.click(selector)
-- page.locator(selector).is_visible()
-- page.locator(selector).inner_text()
+---
 
-## 🔎 Playwright Locator Tips
+## How to Create New Tests
+
+1. Create a feature file in `features/ui/`
+2. Create a test file in `tests/ui/` with `@scenario` decorators
+3. Implement step definitions using `@given`, `@when`, `@then` decorators
+4. Use page objects from `tests/ui/pages/` for UI interactions
+5. Keep explicit `@allure.feature`, `@allure.story`, and `@allure.severity` decorators for reporting
+
+---
+
+## Playwright Locator Tips
 Examples:
 ```python
 page.locator("#username")
@@ -155,41 +197,26 @@ page.locator(".button")
 page.locator("button[type='submit']")
 ```
 
-## 📂 Managing Test Data (will expand on this later with a script that creates test data)
-For file upload tests, create a dummy file:
-```bash
-echo "Hello World" > testfile.txt
-```
+---
 
-## 🚀 Ways to Expand This Project
+## Ways to Expand This Project
 
 ### Done
-✅ Implement the Page Object Model (POM)
-
-✅ Generate HTML test reports (Allure)
+- Implement the Page Object Model (POM)
+- Generate HTML test reports (Allure)
+- Add BDD-Style Gherkin test scenarios
 
 ### To do
-✅ Add BDD-Style Gherking test scenarios
+- Use pytest parametrise to test multiple inputs
+- Add API tests
+- Integrate tests inside CI/CD pipelines
+- Run tests in headless mode for speed
+- Test on multiple browsers (Chromium, Firefox, WebKit)
 
-✅ Use pytest parametrise to test multiple inputs
+---
 
-✅ Add API tests
-
-✅ Integrate tests inside CI/CD pipelines
-
-✅ Run tests in headless mode for speed
-
-✅ Test on multiple browsers (Chromium, Firefox, WebKit)
-
-## 📝 Useful Commands
-Run Playwright Codegen (record actions):
-```bash
-playwright codegen https://the-internet.herokuapp.com/
-```
-
-## 👨‍💻 Author
+## Author
 Mihai A. Nițu
 
 GitLab: https://gitlab.com/MAnitsu
-
 LinkedIn: https://www.linkedin.com/in/mihai-alexandru-nitu-b8035a16a/
