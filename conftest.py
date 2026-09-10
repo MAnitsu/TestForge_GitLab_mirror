@@ -1,8 +1,14 @@
 # conftest.py
+import os
 import pytest
 import allure
 from playwright.sync_api import sync_playwright
-from constants.credentials import LoginConfig  
+from dotenv import load_dotenv
+from tests.ui.constants.credentials import LoginConfig
+
+# Load environment variables from .env file if it exists
+load_dotenv()
+
 
 @pytest.fixture(scope="session")
 def browser():
@@ -10,6 +16,7 @@ def browser():
         browser = p.chromium.launch(headless=False)
         yield browser
         browser.close()
+
 
 @pytest.fixture()
 def page(browser):
@@ -26,13 +33,21 @@ def page(browser):
     yield page
     context.close()
 
+
+@pytest.fixture
+def base_url():
+    return os.getenv("BASE_URL", "https://the-internet.herokuapp.com")
+
+
 @pytest.fixture
 def valid_credentials():
     return LoginConfig.get_user("valid_credentials")
 
+
 @pytest.fixture
 def invalid_credentials():
     return LoginConfig.get_user("invalid_credentials")
+
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):

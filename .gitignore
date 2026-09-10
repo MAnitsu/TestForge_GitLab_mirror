@@ -19,3 +19,6 @@ test-results/
 # Allure reports
 reports/allure-results/
 reports/allure-report/
+
+# Environment variables (overridden by CI/CD)
+.env
