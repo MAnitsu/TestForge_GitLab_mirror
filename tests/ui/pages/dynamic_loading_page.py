@@ -7,7 +7,7 @@ from playwright.sync_api import Page
 class DynamicLoadingPage:
     def __init__(self, page: Page, base_url: str = ""):
         self.page = page
-        self.base_url = base_url or os.getenv("BASE_URL", "https://the-internet.herokuapp.com")
+        self.base_url = base_url or os.getenv("BASE_URL", "")
         self.start_button = page.locator("#start button")
         self.finish_locator = page.locator("#finish")
 

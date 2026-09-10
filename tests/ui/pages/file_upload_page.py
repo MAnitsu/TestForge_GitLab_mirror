@@ -8,7 +8,7 @@ from playwright.sync_api import Page
 class FileUploadPage:
     def __init__(self, page: Page, base_url: str = ""):
         self.page = page
-        self.base_url = base_url or os.getenv("BASE_URL", "https://the-internet.herokuapp.com")
+        self.base_url = base_url or os.getenv("BASE_URL", "")
         self.choose_file_button = page.locator("#file-upload")
         self.upload_button = page.locator("#file-submit")
         self.uploaded_text = page.locator("#uploaded-files")

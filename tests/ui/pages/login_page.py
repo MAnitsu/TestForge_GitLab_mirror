@@ -7,7 +7,7 @@ from playwright.sync_api import Page
 class LoginPage:
     def __init__(self, page: Page, base_url: str = ""):
         self.page = page
-        self.base_url = base_url or os.getenv("BASE_URL", "https://the-internet.herokuapp.com")
+        self.base_url = base_url or os.getenv("BASE_URL", "")
         self.username = page.locator("#username")
         self.password = page.locator("#password")
         self.login_button = page.locator("button[type='submit']")
