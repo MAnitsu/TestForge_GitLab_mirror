@@ -13,7 +13,7 @@ load_dotenv()
 @pytest.fixture(scope="session")
 def browser():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         yield browser
         browser.close()
 
@@ -36,7 +36,7 @@ def page(browser):
 
 @pytest.fixture
 def base_url():
-    return os.getenv("BASE_URL", "https://the-internet.herokuapp.com")
+    return os.getenv("BASE_URL", "")
 
 
 @pytest.fixture

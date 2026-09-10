@@ -7,7 +7,7 @@ from playwright.sync_api import Page
 class DropdownPage:
     def __init__(self, page: Page, base_url: str = ""):
         self.page = page
-        self.base_url = base_url or os.getenv("BASE_URL", "https://the-internet.herokuapp.com")
+        self.base_url = base_url or os.getenv("BASE_URL", "")
         self.dropdown = page.locator("#dropdown")
 
     def navigate(self):

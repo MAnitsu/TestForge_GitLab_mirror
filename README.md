@@ -2,7 +2,7 @@
 
 This project automates UI tests for [the-internet.herokuapp.com](https://the-internet.herokuapp.com/) using Python, pytest, pytest-bdd, Playwright and Allure.
 
-Allure report showcase: https://manitsu.github.io/PlaywrightFramework/#
+Allure report showcase: https://manitsu-group.gitlab.io/-/PlaywrightFramework/-/jobs/16428550042/artifacts/reports/allure-report/index.html
 
 ---
 
@@ -205,12 +205,12 @@ page.locator("button[type='submit']")
 - Implement the Page Object Model (POM)
 - Generate HTML test reports (Allure)
 - Add BDD-Style Gherkin test scenarios
+- Integrate tests inside CI/CD pipelines
+- Run tests in headless mode for speed
 
 ### To do
 - Use pytest parametrise to test multiple inputs
 - Add API tests
-- Integrate tests inside CI/CD pipelines
-- Run tests in headless mode for speed
 - Test on multiple browsers (Chromium, Firefox, WebKit)
 
 ---
