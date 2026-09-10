@@ -96,15 +96,6 @@ pip install -r requirements.txt
 playwright install
 ```
 
-### 5. Configure BASE_URL
-Copy the `.env.example` file and set your base URL:
-```bash
-cp .env.example .env
-# Edit .env to set BASE_URL
-```
-
-Default: `https://the-internet.herokuapp.com`
-
 ---
 
 ## Running Tests
