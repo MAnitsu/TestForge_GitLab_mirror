@@ -3,6 +3,7 @@
 This project automates UI tests for [the-internet.herokuapp.com](https://the-internet.herokuapp.com/) and API tests for [JSONPlaceholder](https://jsonplaceholder.typicode.com/) using Python, pytest, pytest-bdd, Playwright and Allure.
 
 Allure report showcase: https://manitsu-group.gitlab.io/-/PlaywrightFramework/-/jobs/16428550042/artifacts/reports/allure-report/index.html
+successful pipeline showcase: https://gitlab.com/manitsu-group/PlaywrightFramework/-/pipelines/2844414081
 
 ---
 
@@ -47,8 +48,6 @@ PlaywrightFramework/
 ├─ conftest.py
 
 ├─ requirements.txt
-
-├─ .env
 
 ├─ .env.example
 
