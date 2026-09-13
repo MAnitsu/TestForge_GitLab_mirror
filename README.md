@@ -106,7 +106,7 @@ The virtual environment is not included in the repository. Each user should gene
 ```bash
 # Windows:
 python -m venv venv
-venv\Scripts/activate # activates environment
+venv/Scripts/activate # activates environment
 
 # macOS/Linux:
 python3 -m venv venv
