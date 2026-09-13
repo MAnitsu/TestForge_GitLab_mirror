@@ -6,15 +6,17 @@ stages:
 
 before_script:
   - apt-get update
-  - apt-get install -y nodejs npm
+  - apt-get install -y openjdk-17-jre nodejs npm
   - python -m pip install -r requirements.txt
   - npm install -g allure-commandline
-  - mkdir -p reports/allure-results-api reports/allure-report-api reports/allure-results reports/allure-report
 
 test_api:
   stage: test_api
 
   script:
+    - python -m pytest --alluredir=reports/allure-results-api || TEST_EXIT_CODE=$?
+    - allure generate reports/allure-results --clean -o reports/allure-report-api
+    - exit ${TEST_EXIT_CODE:-0}
     - |
       set +e
       python -m pytest tests/api --alluredir=reports/allure-results-api
@@ -33,6 +35,10 @@ test_ui:
   stage: test_ui
 
   script:
+    - python -m playwright install --with-deps chromium
+    - python -m pytest --alluredir=reports/allure-results || TEST_EXIT_CODE=$?
+    - allure generate reports/allure-results --clean -o reports/allure-report
+    - exit ${TEST_EXIT_CODE:-0}
     - |
       set +e
       python -m pytest tests/ui --alluredir=reports/allure-results
