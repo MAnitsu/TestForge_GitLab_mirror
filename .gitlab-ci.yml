@@ -1,27 +1,44 @@
 image: python:3.12-bookworm
 
 stages:
+  - test_api
   - test_ui
 
 before_script:
   - apt-get update
   - apt-get install -y openjdk-17-jre nodejs npm
   - python -m pip install -r requirements.txt
-  - npm install -g allure-commandline
   - python -m playwright install --with-deps chromium
-  - mkdir -p reports/allure-results reports/allure-report
+  - npm install -g allure-commandline
+
+test_api:
+  stage: test_api
+
+  script:
+    - mkdir -p reports/allure-results-api reports/allure-report-api
+    - pytest tests/api --alluredir=reports/allure-results-api || TEST_EXIT_CODE=$?
+    - allure generate reports/allure-results-api --clean -o reports/allure-report-api
+    - exit ${TEST_EXIT_CODE:-0}
+
+  artifacts:
+    when: always
+    expose_as: "Allure API Report"
+    paths:
+      - reports/allure-report-api/
+      - reports/allure-results-api/
 
 test_ui:
   stage: test_ui
 
   script:
-    - python -m pytest --alluredir=reports/allure-results || TEST_EXIT_CODE=$?
-    - allure generate reports/allure-results --clean -o reports/allure-report
+    - mkdir -p reports/allure-results-ui reports/allure-report-ui
+    - pytest tests/ui --alluredir=reports/allure-results-ui || TEST_EXIT_CODE=$?
+    - allure generate reports/allure-results-ui --clean -o reports/allure-report-ui
     - exit ${TEST_EXIT_CODE:-0}
 
   artifacts:
     when: always
-    expose_as: "Allure Report"
+    expose_as: "Allure UI Report"
     paths:
-      - reports/allure-report/
-      - reports/allure-results/
+      - reports/allure-report-ui/
+      - reports/allure-results-ui/
