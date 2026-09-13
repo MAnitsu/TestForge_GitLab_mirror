@@ -1,6 +1,6 @@
 # UI Test Automation with Python & Playwright
 
-This project automates UI tests for [the-internet.herokuapp.com](https://the-internet.herokuapp.com/) using Python, pytest, pytest-bdd, Playwright and Allure.
+This project automates UI tests for [the-internet.herokuapp.com](https://the-internet.herokuapp.com/) and API tests for [JSONPlaceholder](https://jsonplaceholder.typicode.com/) using Python, pytest, pytest-bdd, Playwright and Allure.
 
 Allure report showcase: https://manitsu-group.gitlab.io/-/PlaywrightFramework/-/jobs/16428550042/artifacts/reports/allure-report/index.html
 
@@ -10,27 +10,39 @@ Allure report showcase: https://manitsu-group.gitlab.io/-/PlaywrightFramework/-/
 
 PlaywrightFramework/
 
-├─ features/ui/
+├─ features/
 
-│   └─ *.feature
+│   ├─ api/
+
+│   │   └─ *.feature
+
+│   └─ ui/
+
+│       └─ *.feature
 
 ├─ tests/
 
-│   ├─ ui/
+│   ├─ api/
 
-│   │   ├─ pages/
+│   │   ├─ conftest.py
 
-│   │   │   └─ *_page.py
+│   │   └─ test_*.py
 
-│   │   ├─ data/
+│   └─ ui/
 
-│   │   │   └─ textfile.txt
+│       ├─ pages/
 
-│   │   ├─ constants/
+│       │   └─ *_page.py
 
-│   │   │   └─ credentials.py
+│       ├─ data/
 
-│   │   ├─ test_*.py
+│       │   └─ textfile.txt
+
+│       ├─ constants/
+
+│       │   └─ credentials.py
+
+│       └─ test_*.py
 
 ├─ conftest.py
 
@@ -38,16 +50,20 @@ PlaywrightFramework/
 
 ├─ .env
 
+├─ .env.example
+
 ├─ .gitignore
 
 └─ README.md
 
-- `features/ui/` → Contains BDD feature files (Gherkin scenarios)
-- `tests/ui/` → Contains BDD test implementations with step definitions
+- `features/api/` → Contains API BDD feature files
+- `features/ui/` → Contains UI BDD feature files
+- `tests/api/` → Contains API BDD test implementations with step definitions
+- `tests/ui/` → Contains UI BDD test implementations with step definitions
 - `tests/ui/pages/` → UI-related page objects
 - `tests/ui/data/` → UI-related test data
 - `tests/ui/constants/` → UI-related credentials
-- `conftest.py` → Defines pytest fixtures for browser, page setup, and allure failure hooks
+- `conftest.py` → Defines pytest fixtures for browser, page setup, API base URLs, and allure failure hooks
 - `requirements.txt` → Python dependencies
 - `.gitignore` → Excludes unnecessary or system-specific files from version control
 - `README.md` → Documentation
@@ -58,6 +74,21 @@ PlaywrightFramework/
 - Python ≥ 3.9
 - Git
 - Playwright CLI (`pip install playwright`)
+
+---
+
+## Environment Variables
+
+| Variable | Default | Description |
+|---|---:|---|
+| `BASE_URL` | `https://the-internet.herokuapp.com` | UI test base URL |
+| `API_BASE_URL` | `https://jsonplaceholder.typicode.com` | API test base URL |
+| `VALID_USER` | `tomsmith` | Valid login username |
+| `VALID_PASS` | `SuperSecretPassword!` | Valid login password |
+| `INVALID_USER` | `wronguser` | Invalid login username |
+| `INVALID_PASS` | `wrongpassword` | Invalid login password |
+
+The `.env` file is ignored by Git. Set these variables in `.env` locally or in CI/CD.
 
 ---
 
@@ -75,7 +106,7 @@ The virtual environment is not included in the repository. Each user should gene
 ```bash
 # Windows:
 python -m venv venv
-venv\Scripts\activate # activates environment
+venv\Scripts/activate # activates environment
 
 # macOS/Linux:
 python3 -m venv venv
@@ -104,6 +135,17 @@ Run all tests:
 ```bash
 pytest
 ```
+
+Run API tests only:
+```bash
+pytest tests/api
+```
+
+Run UI tests only:
+```bash
+pytest tests/ui
+```
+
 Run a specific test file:
 ```bash
 pytest tests/ui/test_login.py
@@ -168,15 +210,49 @@ def verify_success_message(page):
     assert page.login_page.success_message_visible()
 ```
 
+### API Feature Files (`features/api/`)
+BDD API scenarios use the same pattern:
+```gherkin
+Feature: Posts API
+  Scenario: Retrieve a post by id
+    Given the API base URL is configured
+    When I request post with id 1
+    Then the response status should be 200
+    And the response should contain post id 1
+```
+
+### API Test Files (`tests/api/`)
+BDD API test implementations use `requests` and the same decorators:
+```python
+@scenario("../../features/api/posts.feature", "Retrieve a post by id")
+@allure.feature("API")
+@allure.story("Posts")
+def test_retrieve_post():
+    """Verify a post can be retrieved from the dummy API endpoint."""
+
+@given("the API base URL is configured")
+def configure_api_base_url(api_base_url):
+    assert api_base_url
+
+@when("I request post with id 1")
+def request_post(api_response):
+    assert api_response.status_code == 200
+
+@then("the response should contain post id 1")
+def verify_response_post_id(api_response):
+    assert api_response.json()["id"] == 1
+```
+
 ---
 
 ## How to Create New Tests
 
-1. Create a feature file in `features/ui/`
-2. Create a test file in `tests/ui/` with `@scenario` decorators
+1. Create a feature file in `features/ui/` or `features/api/`
+2. Create a test file in `tests/ui/` or `tests/api/` with `@scenario` decorators
 3. Implement step definitions using `@given`, `@when`, `@then` decorators
 4. Use page objects from `tests/ui/pages/` for UI interactions
-5. Keep explicit `@allure.feature`, `@allure.story`, and `@allure.severity` decorators for reporting
+5. Use `requests` fixtures from `tests/api/conftest.py` for API interactions
+6. Keep explicit `@allure.feature`, `@allure.story`, and `@allure.severity` decorators for reporting
 
 ---
 
@@ -196,12 +272,12 @@ page.locator("button[type='submit']")
 - Implement the Page Object Model (POM)
 - Generate HTML test reports (Allure)
 - Add BDD-Style Gherkin test scenarios
+- Add BDD-style API tests
 - Integrate tests inside CI/CD pipelines
 - Run tests in headless mode for speed
 
 ### To do
 - Use pytest parametrise to test multiple inputs
-- Add API tests
 - Test on multiple browsers (Chromium, Firefox, WebKit)
 
 ---
