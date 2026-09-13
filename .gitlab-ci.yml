@@ -15,8 +15,9 @@ test_api:
   stage: test_api
 
   script:
+    - mkdir -p reports/allure-results-api reports/allure-report-api
     - pytest tests/api --alluredir=reports/allure-results-api || TEST_EXIT_CODE=$?
-    - allure generate reports/allure-results --clean -o reports/allure-report-api
+    - allure generate reports/allure-results-api --clean -o reports/allure-report-api
     - exit ${TEST_EXIT_CODE:-0}
 
   artifacts:
@@ -30,8 +31,9 @@ test_ui:
   stage: test_ui
 
   script:
-    - pytest tests/ui --alluredir=reports/allure-result-ui || TEST_EXIT_CODE=$?
-    - allure generate reports/allure-results --clean -o reports/allure-report-ui
+    - mkdir -p reports/allure-results-ui reports/allure-report-ui
+    - pytest tests/ui --alluredir=reports/allure-results-ui || TEST_EXIT_CODE=$?
+    - allure generate reports/allure-results-ui --clean -o reports/allure-report-ui
     - exit ${TEST_EXIT_CODE:-0}
 
   artifacts:
@@ -39,4 +41,4 @@ test_ui:
     expose_as: "Allure UI Report"
     paths:
       - reports/allure-report-ui/
-      - reports/allure-result-ui/
+      - reports/allure-results-ui/
