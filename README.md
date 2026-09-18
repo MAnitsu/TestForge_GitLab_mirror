@@ -1,4 +1,4 @@
-# TestForge - Test Automation made simple with Python
+# TestForge - Test Automation made easy with Python
 
 This project automates UI tests for [the-internet.herokuapp.com](https://the-internet.herokuapp.com/) and API tests for [JSONPlaceholder](https://jsonplaceholder.typicode.com/) using Python, pytest, pytest-bdd, Playwright and Allure.
 
