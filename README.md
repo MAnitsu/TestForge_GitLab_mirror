@@ -10,51 +10,32 @@ Successful pipeline showcase: https://gitlab.com/MAnitsu/TestForge/-/pipelines/2
 
 ## Project Structure
 
+```text
 PlaywrightFramework/
 
-├─ features/
-
+├── features/
 │   ├─ api/
-
 │   │   └─ *.feature
-
 │   └─ ui/
-
 │       └─ *.feature
-
 ├─ tests/
-
 │   ├─ api/
-
 │   │   ├─ conftest.py
-
 │   │   └─ test_*.py
-
 │   └─ ui/
-
 │       ├─ pages/
-
 │       │   └─ *_page.py
-
 │       ├─ data/
-
 │       │   └─ textfile.txt
-
 │       ├─ constants/
-
 │       │   └─ credentials.py
-
 │       └─ test_*.py
-
 ├─ conftest.py
-
 ├─ requirements.txt
-
 ├─ .env.example
-
 ├─ .gitignore
-
 └─ README.md
+```
 
 - `features/api/` → Contains API BDD feature files
 - `features/ui/` → Contains UI BDD feature files
