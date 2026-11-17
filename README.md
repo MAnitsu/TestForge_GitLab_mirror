@@ -267,4 +267,5 @@ page.locator("button[type='submit']")
 Mihai A. Nițu
 
 GitLab: https://gitlab.com/MAnitsu
+
 LinkedIn: https://www.linkedin.com/in/mihai-alexandru-nitu-b8035a16a/
